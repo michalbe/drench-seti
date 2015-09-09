@@ -25,12 +25,12 @@ function draw () {
   var ctx = canvas.getContext('2d');
   for (var j = 0; j < board.length; j++) {
 	  for (var i = 0; i < board.length; i++) {
-	  	
+
 	    ctx.fillStyle = colors[board[j][i]];
-	    
+
 	    ctx.fillRect (i*35, j*35, 35, 35);
 	  }
-  }	
+  }
 }
 
 function setUpClickHandlers () {
@@ -50,9 +50,21 @@ function colorChange (a) {
 	/*updateBoard(color);*/
 }
 
+var checkedSquares = [];
+
+function checkElement(x, y, sourceColor, destColor){
+	checkedSquares.push(x + '-' + y);
+
+	if ((x ===0 && y === 0) || checkColor(x, y) === sourceColor)
+	updateBoard(destColor);
+
+	// W neighbour
+	if (x > 0) {
+
+	}
+}
+
 function updateBoard(color) {
-	var checkedSquares = [];
-	
 
 }
 
