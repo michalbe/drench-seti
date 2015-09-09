@@ -47,8 +47,14 @@ function colorChange (a) {
 	console.log(a)
 	var color = a.target.getAttribute('data-color');
 	console.log(color);
+	/*updateBoard(color);*/
 }
 
+function updateBoard(color) {
+	var checkedSquares = [];
+	
+
+}
 
 setUpClickHandlers();
 draw();
