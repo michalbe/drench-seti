@@ -5,6 +5,23 @@
 
 }
 
+#moves {
+	font-size: 20px;
+}
+
+#moves div {
+	display: inline;
+}
+
+#history {
+	height: 300px;
+	overflow: scroll;
+}
+
+a {
+	cursor: pointer;
+}
+
 button {
 	width: 35px;
 	height: 35px;

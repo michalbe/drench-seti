@@ -1,14 +1,20 @@
 
-var board = [
-	[1,3,0,2,1,0,0,0],
-	[0,3,1,1,2,2,1,0],
-	[3,1,3,4,3,1,1,2],
-	[0,3,4,3,3,3,2,1],
-	[0,6,5,3,1,4,5,1],
-	[5,0,6,5,4,1,4,0],
-	[0,6,5,6,5,1,3,1],
-	[0,0,0,1,0,3,6,0],
-];
+var colors = 6;
+var sizeX = 8;
+var sizeY = 8;
+var sizeCell = 35;
+var board = [];
+var moves = 0;
+
+var generateBoard = function(){
+	for (var j = 0; j < sizeX; j++) {
+		board[j] = [];
+	  for (var i = 0; i < sizeY; i++) {
+			board[j][i] = ~~(Math.random()*7);
+		}
+	}
+};
+
 
 var colors = [
 	'rgb(255,255,255)',
@@ -22,13 +28,15 @@ var colors = [
 
 function draw () {
   var canvas = document.getElementById('canvas');
+	canvas.width = sizeX * sizeCell;
+	canvas.height = sizeY * sizeCell;
   var ctx = canvas.getContext('2d');
   for (var j = 0; j < board.length; j++) {
 	  for (var i = 0; i < board.length; i++) {
 
 	    ctx.fillStyle = colors[board[j][i]];
 
-	    ctx.fillRect (i*35, j*35, 35, 35);
+	    ctx.fillRect (i*sizeCell, j*sizeCell, sizeCell, sizeCell);
 	  }
   }
 }
@@ -44,9 +52,26 @@ function setUpClickHandlers () {
 
 
 function destColor (evt) {
+	moves++;
+	document.querySelector('#moves span').textContent = moves;
+	checkedSquares = [];
 	var color = evt.target.getAttribute('data-color');
 	checkElement(0, 0, checkColor(0, 0), parseInt(color, 10));
 	draw();
+}
+
+function checkWinningConditions(){
+	var win = true;
+	var winningColor = board[0][0];
+	for (var j = 0; j < board.length; j++) {
+	  for (var i = 0; i < board.length; i++) {
+	    if (parseInt([board[j][i]], 10) !== winningColor) {
+				win = false;
+			}
+	  }
+  }
+
+	return win;
 }
 
 function checkColor (x, y) {
@@ -57,7 +82,7 @@ function checkColor (x, y) {
 var checkedSquares = [];
 
 function checkElement(x, y, sourceColor, destColor) {
-	if (checkedSquares.indexOf(x + '-' + 'y') > -1) {
+	if (checkedSquares.indexOf(x + '-' + y) > -1) {
 		return;
 	}
 
@@ -94,9 +119,42 @@ function checkElement(x, y, sourceColor, destColor) {
 
 
 function updateElement(x, y, color) {
-	console.log('coords', x, y, 'color', color);
+	//console.log('coords', x, y, 'color', color);
 	board[y][x] = color;
 }
 
+generateBoard();
 setUpClickHandlers();
 draw();
+var lowest = 9999;
+var highest = 0;
+var games = 0;
+
+var timeout;
+var autoPlay = function(){
+	var buttons = document.querySelectorAll('button');
+	var button = buttons[~~(Math.random()*buttons.length)];
+	button.click();
+	if (!checkWinningConditions()) {
+		timeout = setTimeout(autoPlay, 1);
+	} else {
+		games++;
+		if (moves < lowest) {
+			lowest = moves;
+			moves = '<span style="color: #f00">' + moves + '</span>';
+			console.log('Lowest:', lowest);
+		} else if (moves > highest) {
+			highest = moves;
+			moves = '<span style="color: #00f">' + moves + '</span>';
+			console.log('Highest:', highest);
+		}
+		document.querySelector('#moves div').textContent = games;
+
+		document.getElementById('history').innerHTML += moves + ', ';
+		document.getElementById('history').scrollTop = 100000;
+		moves = 0;
+		generateBoard();
+		draw();
+		autoPlay();
+	}
+};
