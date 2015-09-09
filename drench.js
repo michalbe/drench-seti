@@ -45,11 +45,10 @@ function setUpClickHandlers () {
 
 function colorChange (a) {
 	console.log(a)
-	var attribute = button.getAttribute('data-color');
-	var color = button.getAttribute('data-color');
-	if (color.getAttribute('data-color') == 1) {
-		console.log('tak');
-	}
+	var color = a.target.getAttribute('data-color');
+	console.log(color);
 }
+
+
 setUpClickHandlers();
 draw();
