@@ -4,3 +4,36 @@
 	text-align: center;
 
 }
+
+button {
+	width: 35px;
+	height: 35px;
+}
+
+#drench-button-1 {
+	background-color: rgb(255,255,255);
+}
+
+#drench-button-2 {
+	background-color: rgb(254,202,8);
+}
+
+#drench-button-3 {
+	background-color: rgb(248,162,40);
+}
+
+#drench-button-4 {
+	background-color: rgb(18,148,223);
+}
+
+#drench-button-5 {
+	background-color: rgb(16,129,199);
+}
+
+#drench-button-6 {
+	background-color: rgb(234,47,29);
+}
+
+#drench-button-7 {
+	background-color: rgb(229,19,25);
+}

@@ -31,6 +31,25 @@ function draw () {
 	    ctx.fillRect (i*35, j*35, 35, 35);
 	  }
   }	
-};
+}
 
+function setUpClickHandlers () {
+	var forEach = Array.prototype.forEach;
+	var buttons = document.querySelectorAll("button");
+
+	forEach.call(buttons, function(button) {
+		button.addEventListener('click', colorChange ,false);
+	})
+}
+
+
+function colorChange (a) {
+	console.log(a)
+	var attribute = button.getAttribute('data-color');
+	var color = button.getAttribute('data-color');
+	if (color.getAttribute('data-color') == 1) {
+		console.log('tak');
+	}
+}
+setUpClickHandlers();
 draw();
