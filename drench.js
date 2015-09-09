@@ -38,34 +38,59 @@ function setUpClickHandlers () {
 	var buttons = document.querySelectorAll("button");
 
 	forEach.call(buttons, function(button) {
-		button.addEventListener('click', colorChange ,false);
+		button.addEventListener('click', destColor ,false);
 	})
 }
 
 
-function colorChange (a) {
-	console.log(a)
-	var color = a.target.getAttribute('data-color');
-	console.log(color);
-	/*updateBoard(color);*/
+function destColor (evt) {
+	var color = evt.target.getAttribute('data-color');
+	checkElement(0, 0, checkColor(0, 0), color);
+	draw();
+}
+
+function checkColor (x, y) {
+	sourceColor = board[y][x];
+	return sourceColor;
 }
 
 var checkedSquares = [];
 
 function checkElement(x, y, sourceColor, destColor){
+	if (checkedSquares.indexOf(x + '-' + 'y') > -1) {
+		return;
+	}
+
 	checkedSquares.push(x + '-' + y);
 
-	if ((x ===0 && y === 0) || checkColor(x, y) === sourceColor)
-	updateBoard(destColor);
+	if ((x ===0 && y === 0) || checkColor(x, y) === sourceColor) {
+		updateElement(x, y, destColor);
 
-	// W neighbour
-	if (x > 0) {
+		// W neighbour
+		if (x > 0) {
+			checkElement(x-1, y, sourceColor, destColor);
+		}
 
+		// N neighbour
+		if (y > 0) {
+			checkElement(x, y-1, sourceColor, destColor);
+		}
+
+		// E neighbour
+		if (x < board.length-1) {
+			checkElement(x+1, y, sourceColor, destColor);
+		}
+
+		// E neighbour
+		if (y < board[0].length-1) {
+			checkElement(x, y+1, sourceColor, destColor);
+		}
 	}
 }
 
-function updateBoard(color) {
 
+function updateElement(x, y, color) {
+	board[y][x] = color;
 }
 
 setUpClickHandlers();
