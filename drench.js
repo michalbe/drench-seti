@@ -38,21 +38,28 @@ function setUpClickHandlers () {
 	var buttons = document.querySelectorAll("button");
 
 	forEach.call(buttons, function(button) {
-		button.addEventListener('click', colorChange ,false);
+		button.addEventListener('click', destColor ,false);
 	})
 }
 
 
-function colorChange (a) {
+function destColor (a) {
 	console.log(a)
 	var color = a.target.getAttribute('data-color');
 	console.log(color);
-	/*updateBoard(color);*/
+	
 }
+
+function checkColor (x, y) {
+	sourceColor = board[y][x];
+	return sourceColor;
+}
+
+
 
 function updateBoard(color) {
 	var checkedSquares = [];
-	
+
 
 }
 
