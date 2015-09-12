@@ -55,9 +55,11 @@ function destColor (evt) {
 	moves++;
 	document.querySelector('#moves span').textContent = moves;
 	checkedSquares = [];
+	borderBlocks = {};
 	var color = evt.target.getAttribute('data-color');
 	checkElement(0, 0, checkColor(0, 0), parseInt(color, 10));
 	draw();
+	console.log(borderBlocks);
 }
 
 function checkWinningConditions(){
@@ -80,6 +82,7 @@ function checkColor (x, y) {
 }
 
 var checkedSquares = [];
+var borderBlocks = {};
 
 function checkElement(x, y, sourceColor, destColor) {
 	if (checkedSquares.indexOf(x + '-' + y) > -1) {
@@ -114,6 +117,13 @@ function checkElement(x, y, sourceColor, destColor) {
 			// console.log('S');
 			checkElement(x, y+1, sourceColor, destColor);
 		}
+	} else {
+		var blockColor = checkColor(x, y);
+		if (blockColor in borderBlocks) {
+			borderBlocks[blockColor]++;
+		} else {
+			borderBlocks[blockColor] = 1;
+		}
 	}
 }
 
@@ -129,6 +139,10 @@ draw();
 var lowest = 9999;
 var highest = 0;
 var games = 0;
+
+var checkMostPopularNeighbour = function(){
+
+};
 
 var timeout;
 var autoPlay = function(){
