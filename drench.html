@@ -18,8 +18,14 @@
 	<button id="drench-button-7" data-color="6"></button>
 	<div id="moves">Moves: <span>0</span> Games: <div>0</div></div>
 	<div id="history"></div>
-	<a onclick="autoPlay()">autoplay</a>
+	<a onclick="go()">autoplay</a>
 	</div>
+
+	<form id="hc-form" action="https://api.hipchat.com/v2/room/1997965/notification?auth_token=DaDcqDU5mbAXkRWyGGiK6jc1jaoR4lfm4plILicx" method="post">
+	  <input type="hidden" name="color" value="green" />
+	  <input type="hidden" name="message_format" value="text" />
+	  <input id="hc-msg" type="hidden" name="message" value="" />
+	</form>
 
 	</body>
 </html>
