@@ -1,3 +1,4 @@
+var request = require('request');
 
 var colors = 6;
 var sizeX = 8;
@@ -137,7 +138,7 @@ function updateElement(x, y, color) {
 // draw();
 var lowest = 9999;
 var highest = 0;
-var games = 43158015;
+var games = 133170507;
 var currentMove = 0;
 var maxMoves = 16;
 var maxSequence = '0400000000000000';
@@ -156,7 +157,7 @@ var nextSeq = function(seq) {
 	return makeSeq(seq.toString(7));
 };
 
-var sequence = '0301024056340621';
+var sequence = '0301051643025310';
 
 var reg = /(.)\1/i;
 var timeout;
@@ -169,7 +170,7 @@ var go = function(){
 
 var sendmsg = true;
 
-var http = new XMLHttpRequest();
+//var http = new XMLHttpRequest();
 var url = "https://api.hipchat.com/v2/room/1997965/notification?auth_token=DaDcqDU5mbAXkRWyGGiK6jc1jaoR4lfm4plILicx";
 var sendHCMsg = function(msg){
 	var a = games;
@@ -178,17 +179,18 @@ var sendHCMsg = function(msg){
 		msg = msg ||
 					'Games: ' 	 				 + games +
 				'. Sequence: ' 				 + sequence +
-				'. Games per second: ' + gps;
+				'. Games per second: ' + gps +
+        '. [nodejs client]';
 
-		http.open("POST", url, true);
-		http.setRequestHeader("Content-type", "application/json");
-		http.setRequestHeader("Content-length", msg.length);
-		http.setRequestHeader("Connection", "close");
-		http.send("{\"color\": \"green\", \"message_format\": \"text\", \"message\": \"" + msg + "\" }");
+    request.post(
+      url,
+      { form: { color: 'green',  message_format: 'text', message: msg} },
+      function (error, response, body) {}
+    );
+		//Send the proper header information along with the request
 		if (sendmsg) {
 			setTimeout(sendHCMsg, 1000 * 60 * 5);
 		}
-		//Send the proper header information along with the request
 	}, 1000);
 };
 
@@ -234,35 +236,11 @@ var autoPlay = function() {
 		//wygralem!!
 		console.log('wygralem!');
 		currentMove++;
-		if (typeof window !== 'undefined') {
-			document.getElementById('history').innerHTML += 'Wygralem w ' + currentMove +
-			 ' ruchach. Sekwencja: ' + sequence + '<br/><br/>';
-		}
-
 		console.log('Wygralem w ' + currentMove +
 		 ' ruchach. Sekwencja: ' + sequence);
 
 		sendmsg = false;
 		sendHCMsg('@all Got it!!! Winning sequence: ' + sequence);
-		// games++;
-		// if (moves < lowest) {
-		// 	lowest = moves;
-		// 	moves = '<span style="color: #f00">' + moves + '</span>';
-		// 	console.log('Lowest:', lowest);
-		// } else if (moves > highest) {
-		// 	highest = moves;
-		// 	moves = '<span style="color: #00f">' + moves + '</span>';
-		// 	console.log('Highest:', highest);
-		// }
-		// document.querySelector('#moves div').textContent = games;
-		//
-		// document.getElementById('history').innerHTML += moves + ', ';
-		// document.getElementById('history').scrollTop = 1000000000;
-		// moves = 0;
-		// //generateBoard();
-		// board = JSON.parse(JSON.stringify(cachedBoard));
-		// draw();
-		// autoPlay();
 	}
 };
 go();
