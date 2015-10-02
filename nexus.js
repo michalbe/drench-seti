@@ -1,9 +1,9 @@
 var maxMoves = 16;
 var sequence = '0301051643025310';
-var games = 1000;
+var games = 10000;
 var reg = /(.)\1/i;
-var batchesToKeep = 2;
-var numbersToGegenerate = 1000;
+var batchesToKeep = 10;
+var numbersToRegenerate = 10000;
 var batches = [];
 
 var http = require('http');
@@ -25,7 +25,7 @@ var nextSeq = function(seq) {
 
 var generateBatch = function() {
   var output = [];
-  var numbersToGenerate = numbersToGegenerate;
+  var numbersToGenerate = numbersToRegenerate;
 
   while(numbersToGenerate--) {
     sequence = nextSeq(sequence);
@@ -56,7 +56,6 @@ while (batchesToKeep--) {
 
 var server = http.createServer( function(req, res) {
   if (req.method === 'POST') {
-    console.log('new slave');
     var body = '';
     res.writeHead(200, {'Content-Type': 'text/html'});
     req.on('data', function (data) {
@@ -65,10 +64,23 @@ var server = http.createServer( function(req, res) {
     req.on('end', function () {
         var resp = querystring.parse(body);
         if (resp.action === 'gimme') {
+          console.log('new slave');
+          // generate new batch
           console.log('Sending new batch to client nr', resp.id);
-          res.end(JSON.stringify(batches[0]));
+          res.end(JSON.stringify(batches.shift()));
+          batches.push(generateBatch());
         } else if (resp.action === 'done') {
-          console.log('done');
+          games += numbersToRegenerate;
+          var time = resp.time/1000;
+          console.log(
+            'Client ' + resp.id + ' finished. Sequence: ' +
+            resp.sequence + '. Games: ' + games + '. Time: ' + time + 's.');
+          console.log('Sending new batch to client nr', resp.id);
+          res.end(JSON.stringify(batches.shift()));
+          batches.push(generateBatch());
+        } else if (resp.action === 'win') {
+          console.log('WIN! Sequence: ' + resp.sequence);
+          process.exit();
         }
     });
     // TU LOGIGA GENEROWANIA NOWEGO BATCHA
