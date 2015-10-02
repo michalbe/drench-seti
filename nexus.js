@@ -1,8 +1,13 @@
 var maxMoves = 16;
 var sequence = '0301051643025310';
+var games = 1000;
 var reg = /(.)\1/i;
-var batchesToKeep = 10;
+var batchesToKeep = 2;
+var numbersToGegenerate = 1000;
 var batches = [];
+
+var http = require('http');
+var querystring = require('querystring');
 
 var makeSeq = function(seq){
 	seq = seq.toString();
@@ -18,11 +23,9 @@ var nextSeq = function(seq) {
 	return makeSeq(seq.toString(7));
 };
 
-var t = new Date();
-
 var generateBatch = function() {
   var output = [];
-  var numbersToGenerate = 1000000;
+  var numbersToGenerate = numbersToGegenerate;
 
   while(numbersToGenerate--) {
     sequence = nextSeq(sequence);
@@ -44,12 +47,38 @@ var generateBatch = function() {
   return output;
 };
 
+console.log('Generating numbers.');
 while (batchesToKeep--) {
-  console.log(batchesToKeep, 'to go');
-  console.log(sequence);
+  console.log(batchesToKeep+1 + ' to go');
   batches.push(generateBatch());
 }
 
-var newT = new Date();
-console.log(sequence);
-console.log('time', (newT-t)/1000, 's');
+
+var server = http.createServer( function(req, res) {
+  if (req.method === 'POST') {
+    console.log('new slave');
+    var body = '';
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    req.on('data', function (data) {
+        body += data;
+    });
+    req.on('end', function () {
+        var resp = querystring.parse(body);
+        if (resp.action === 'gimme') {
+          console.log('Sending new batch to client nr', resp.id);
+          res.end(JSON.stringify(batches[0]));
+        } else if (resp.action === 'done') {
+          console.log('done');
+        }
+    });
+    // TU LOGIGA GENEROWANIA NOWEGO BATCHA
+  } else {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end('Up & running. </br>Games: ' + games + '. Sequence ' + sequence);
+  }
+});
+
+port = 3000;
+host = '127.0.0.1';
+server.listen(port, host);
+console.log('server running on ' + host + ':' + port);
