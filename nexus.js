@@ -3,7 +3,7 @@ var sequence = '0301051643025310';
 var games = 10000;
 var reg = /(.)\1/i;
 var batchesToKeep = 10;
-var numbersToRegenerate = 10000;
+var numbersToRegenerate = 1000000;
 var batches = [];
 
 var http = require('http');
