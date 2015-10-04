@@ -3,11 +3,11 @@ var sequence = '0301051643025310';
 var games = 10000;
 var reg = /(.)\1/i;
 var batchesToKeep = 10;
-var numbersToRegenerate = 1000;
+var numbersToRegenerate = 100000;
 var batches = [];
 var unfinishedBatches = {};
 var unfinishedBatchesTimers = {};
-var unfinishedBatchesTimeout = 10000; // 10 sec
+var unfinishedBatchesTimeout = 1000 * 60 * 10; // 10 min
 
 var http = require('http');
 var querystring = require('querystring');
