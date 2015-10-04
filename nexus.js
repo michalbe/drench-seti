@@ -5,6 +5,9 @@ var reg = /(.)\1/i;
 var batchesToKeep = 10;
 var numbersToRegenerate = 1000;
 var batches = [];
+var unfinishedBatches = {};
+var unfinishedBatchesTimers = {};
+var unfinishedBatchesTimeout = 10000; // 10 sec
 
 var http = require('http');
 var querystring = require('querystring');
@@ -47,6 +50,16 @@ var generateBatch = function() {
   return output;
 };
 
+var addBatchToUnfinished = function(batch, id){
+	unfinishedBatches[id] = batch;
+	clearTimeout(unfinishedBatchesTimers[id]);
+	unfinishedBatchesTimers[id] = setTimeout(function(){
+		var t = (unfinishedBatchesTimeout/1000).toPrecision(2);
+		console.log('Client nr ' + id + ' doesn\'t respond for last ' + t + 's. Pushing it\'s batch back');
+		batches.unshift(JSON.parse(unfinishedBatches[id]));
+		delete unfinishedBatches[id];
+	}, unfinishedBatchesTimeout);
+};
 console.log('Generating numbers.');
 while (batchesToKeep--) {
   console.log(batchesToKeep+1 + ' to go');
@@ -55,6 +68,7 @@ while (batchesToKeep--) {
 
 
 var server = http.createServer( function(req, res) {
+	var b;
   if (req.method === 'POST') {
     var body = '';
     res.writeHead(200, {'Content-Type': 'text/html'});
@@ -67,7 +81,9 @@ var server = http.createServer( function(req, res) {
           console.log('new slave');
           // generate new batch
           console.log('Sending new batch to client nr', resp.id);
-          res.end(JSON.stringify(batches.shift()));
+					b = JSON.stringify(batches.shift());
+          res.end(b);
+					addBatchToUnfinished(b, resp.id);
           batches.push(generateBatch());
         } else if (resp.action === 'done') {
           games += numbersToRegenerate;
@@ -76,7 +92,9 @@ var server = http.createServer( function(req, res) {
             'Client ' + resp.id + ' finished. Sequence: ' +
             resp.sequence + '. Games: ' + games + '. Time: ' + time + 's.');
           console.log('Sending new batch to client nr', resp.id);
-          res.end(JSON.stringify(batches.shift()));
+					b = JSON.stringify(batches.shift());
+          res.end(b);
+					addBatchToUnfinished(b, resp.id);
           batches.push(generateBatch());
         } else if (resp.action === 'win') {
           console.log('WIN! Sequence: ' + resp.sequence);
