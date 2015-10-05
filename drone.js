@@ -155,8 +155,9 @@ var autoPlay = function() {
 		}
 	} else {
 		//wygralem!!
-		console.log('wygralem!');
 		currentMove++;
+    console.log('DONE!');
+    console.log('Won in ' + currentMove + ' moves. Winning sequence: ' + sequence);
     // tu wygrałem
     request.post(
       url,
