@@ -3,7 +3,7 @@ var sequence = '0301051643025310';
 var games = 10000;
 var reg = /(.)\1/i;
 var batchesToKeep = 10;
-var numbersToRegenerate = 1000000;
+var numbersToRegenerate = 1000;
 var batches = [];
 
 var http = require('http');
@@ -83,7 +83,6 @@ var server = http.createServer( function(req, res) {
           process.exit();
         }
     });
-    // TU LOGIGA GENEROWANIA NOWEGO BATCHA
   } else {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end('Up & running. </br>Games: ' + games + '. Sequence ' + sequence);
