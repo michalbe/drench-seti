@@ -30,12 +30,12 @@ var autoPlay = function() {
 			currentMove++;
       setImmediate(autoPlay);
 		} else {
-      //postMessage({"win":0,"sequence":sequence,"moves":currentMove});
       if (batches.length === 0) {
-        var newTime = new Date();
+        var t = (new Date()) - time;
+        console.log('Computed sequences in ' + (t/1000).toPrecision(2) + 's.');
         request.post(
           url,
-          { form: { id: id, action: 'done', sequence: sequence, time: newTime - time} },
+          { form: { id: id, action: 'done', sequence: sequence, time: t} },
           function (error, response, body) {
             run(JSON.parse(body));
           }
@@ -58,14 +58,13 @@ var autoPlay = function() {
     request.post(
       url,
       { form: { id: id, action: 'win', sequence: sequence} },
-      function (error, response, body) {
-        run(JSON.parse(body));
-      }
+      function (error, response, body) {}
     );
 	}
 };
 
-var run = function(data){
+var run = function(data) {
+  console.log('Received new batch. Computing...');
   batches = data;
   sequence = batches.pop();
   game.setSequence(sequence);
